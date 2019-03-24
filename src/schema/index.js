@@ -1,24 +1,4 @@
-import graphql from 'graphql';
+import 'graphql-import-node';
+import * as typeDefs from '../../schema.graphqls';
 
-const { GraphQLObjectType, GraphQLString } = graphql;
-
-const BookType = new GraphQLObjectType({
-  name: 'Book',
-  fields: () => ({
-    id: { type: GraphQLString },
-    name: { type: GraphQLString },
-    genre: { type: GraphQLString }
-  })
-});
-
-const RootQuery = new GraphQLObjectType({
-  name: 'RootQueryType',
-  fields: {
-    book: {
-      type: BookType,
-      args: {
-        id: { type: GraphQLString },
-      }
-    }
-  }
-});
+export default typeDefs;

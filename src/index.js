@@ -1,30 +1,41 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
-import { makeExecutableSchema } from 'graphql-tools';
-import typeDefs from './schema';
-import resolvers from './resolvers';
-import models from './database/models';
+const { GraphQLServer } = require('graphql-yoga');
 
-const schema = makeExecutableSchema({
-  typeDefs,
+const links = [{
+  id: 'link-0',
+  url: 'www.howtographql.com',
+  description: 'Fullstack tutorial for GraphQL',
+}];
+let idCount = links.length;
+
+const resolvers = {
+  Query: {
+    info: () => 'This is the API of Hackernews Clone',
+    feed: () => links,
+  },
+
+  Mutation: {
+    post: (parent, { url, description }) => {
+      const link = {
+        id: `link-${idCount++}`,
+        description,
+        url
+      };
+      links.push(link);
+      return link;
+    },
+  },
+
+  Link: {
+    id: parent => parent.id,
+    description: parent => parent.description,
+    url: parent => parent.url,
+  },
+};
+
+
+const server = new GraphQLServer({
+  typeDefs: './src/schema/schema.graphql',
   resolvers,
 });
-const { PORT } = process.env;
 
-const app = express();
-
-app.use('/graphiql', graphiqlExpress({
-  endpointURL: '/graphql',
-}));
-
-app.use('/graphql', bodyParser.json(), graphqlExpress({
-  schema,
-  context: {
-    models,
-  },
-}));
-
-app.listen(PORT, () => {
-  console.log(`Server running on port: ${PORT}`);
-});
+server.start(() => console.log('Server is running on http://localhost:4000'));

@@ -4,7 +4,11 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start:dev": "NODE_ENV=development nodemon -L --exec babel-node src/index.js"
+    "start:dev": "NODE_ENV=development nodemon -L --exec babel-node src/index.js",
+    "db:migrate": "node_modules/.bin/sequelize db:migrate",
+    "db:seed": "node_modules/.bin/sequelize db:seed:all $* --seeders-path src/database/seeders/default",
+    "db:rollback": "node_modules/.bin/sequelize db:migrate:undo:all",
+    "db:rollmigrate": "yarn db:rollback && yarn db:migrate && yarn db:seed"
   },
   "author": "",
   "license": "ISC",
